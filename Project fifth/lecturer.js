@@ -151,36 +151,59 @@ Emman Flinch, [3/26/2025 4:43 PM]
     });
     
     // Send attendance form
-    sendFormBtn.addEventListener('click', async function() {
-        try {
-            const response = await fetch('/api/attendance/send-form', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': Bearer ${localStorage.getItem('token')}
-                },
-                body: JSON.stringify({ courseCode })
-            });
-            
-            const data = await response.json();
-            
-            if (response.ok) {
-                statusMessage.innerHTML = <div class="success-message">${data.message}</div>;
-                
-                // Update student statuses after a delay to allow for WebSocket updates
-                setTimeout(() => {
-                    const statusElements = document.querySelectorAll('.attendance-status');
-                    statusElements.forEach(el => {
-                        el.textContent = 'Form Sent';
-                        el.className = 'attendance-status present';
-                    });
-                }, 1000);
-            } else {
-                statusMessage.innerHTML = <div class="error-message">${data.message}</div>;
+    sendFormBtn.addEventListener('click', function() {
+        statusMessage.innerHTML = 'Getting location...'; // Provide feedback
+        getLocation(async (error, lecturerLocation) => {
+            if (error) {
+                console.error('Error getting location:', error);
+                statusMessage.innerHTML = `<div class="error-message">Error getting location: ${error.message || 'Unknown error'}</div>`;
+                alert('Could not get your location. Please ensure location services are enabled and try again.');
+                return;
             }
-        } catch (error) {
-            console.error('Error sending form:', error);
-            statusMessage.innerHTML = <div class="error-message">An error occurred. Please try again.</div>;
-        }
+
+            if (!lecturerLocation || !lecturerLocation.latitude || !lecturerLocation.longitude) {
+                console.error('Invalid location data:', lecturerLocation);
+                statusMessage.innerHTML = '<div class="error-message">Invalid location data received.</div>';
+                alert('Could not get a valid location. Please try again.');
+                return;
+            }
+            
+            statusMessage.innerHTML = 'Location obtained. Sending form...'; // Provide feedback
+
+            try {
+                const response = await fetch('/api/attendance/send-form', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    },
+                    body: JSON.stringify({
+                        courseCode,
+                        latitude: lecturerLocation.latitude,
+                        longitude: lecturerLocation.longitude
+                    })
+                });
+                
+                const data = await response.json();
+
+                if (response.ok) {
+                    statusMessage.innerHTML = `<div class="success-message">${data.message}</div>`;
+
+                    // Update student statuses after a delay to allow for WebSocket updates
+                    setTimeout(() => {
+                        const statusElements = document.querySelectorAll('.attendance-status');
+                        statusElements.forEach(el => {
+                            el.textContent = 'Form Sent';
+                            el.className = 'attendance-status present'; // Or a new class like 'form-sent'
+                        });
+                    }, 1000);
+                } else {
+                    statusMessage.innerHTML = `<div class="error-message">${data.message || 'Failed to send form'}</div>`;
+                }
+            } catch (err) {
+                console.error('Error sending form:', err);
+                statusMessage.innerHTML = `<div class="error-message">An error occurred: ${err.message || 'Please try again.'}</div>`;
+            }
+        });
     });
 }
