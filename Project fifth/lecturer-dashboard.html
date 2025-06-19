@@ -4,16 +4,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lecturer Dashboard</title>
-    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="style.css"> /* Updated stylesheet link */
 </head>
-<body>
-    <header>
+<body class="dashboard-body"> /* Added dashboard-body class */
+    <header class="dashboard-header"> /* Added dashboard-header class */
         <h1>Lecturer Dashboard</h1>
+        <nav> <!-- Added basic nav structure for dashboards -->
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="#">Profile</a></li>
+                <li><a href="#">Settings</a></li>
+                <li><a href="index.html">Logout</a></li>
+            </ul>
+        </nav>
     </header>
     <main>
         <button id="sendAttendanceForm">Send Attendance Form</button>
         <p id="lecturerLocation"></p>
     </main>
-    <script src="js/scripts.js"></script>
+    <footer class="dashboard-footer"> <!-- Added dashboard-footer class -->
+        <p>&copy; 2025 Attendance System</p>
+    </footer>
+    <script src="js/scripts.js"></script> <!-- Assuming js/scripts.js exists, otherwise path might need adjustment -->
 </body>
 </html>

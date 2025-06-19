@@ -1,19 +1,44 @@
 <!DOCTYPE html>
-<html>
+<html lang="en"> /* Added lang attribute */
 <head>
-<title>Simple Form</title>
+    <meta charset="UTF-8"> /* Added meta charset */
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> /* Added meta viewport */
+    <title>Exam Form</title> /* Changed title */
+    <link rel="stylesheet" href="style.css"> /* Linked style.css */
+    <link rel="shortcut icon" href="./image/no-bg-white.png" type="image/x-icon"> /* Added favicon */
 </head>
-<body>
+<body class="dashboard-body"> /* Added dashboard-body class */
 
-<form action="/action_page.php" method="post">
-  <label for="fname">First Name:</label><br>
-  <input type="text" id="fname" name="fname" value="John"><br><br>
+    <header class="dashboard-header"> /* Added dashboard-header */
+        <h1>Exam Form</h1>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <!-- Add other relevant nav links if needed -->
+            </ul>
+        </nav>
+    </header>
 
-  <label for="lname">Last Name:</label><br>
-  <input type="text" id="lname" name="lname" value="Doe"><br><br>
+    <main> /* Added main element */
+        <div class="form-container"> /* Added form-container div */
+            <form action="/action_page.php" method="post">
+                <h2>Exam Details</h2> /* Added a heading for the form */
+                <label for="fname">First Name:</label>
+                <input type="text" id="fname" name="fname" value="John" required> /* Added required attribute */
 
-  <input type="submit" value="Submit">
-</form>
+                <label for="lname">Last Name:</label>
+                <input type="text" id="lname" name="lname" value="Doe" required> /* Added required attribute */
+
+                <!-- Add more exam-related fields here if necessary -->
+                <hr> /* Added hr for separation */
+                <input type="submit" value="Submit Exam" class="submit-btn"> /* Added class to submit button */
+            </form>
+        </div>
+    </main>
+
+    <footer class="dashboard-footer"> /* Added dashboard-footer */
+        <p>&copy; 2025 Attendance System</p>
+    </footer>
 
 </body>
 </html>

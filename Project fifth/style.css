@@ -1,0 +1,484 @@
+/* Global styles will be added here */
+*{
+    font-family: montserrat;
+    box-sizing: border-box; /* Added global box-sizing */
+}
+
+/* Base body style - can be overridden by page-specific classes */
+body {
+    display: flex;
+    width: 100%; /* Corrected width, was 100vw/110vw */
+    min-height: 100vh; /* Use min-height to allow content to expand */
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-image: url('./image/utas-entrance.jpg'); /* Default background for landing */
+    background-size: cover; /* Changed to cover for better scaling */
+    background-position: center; /* Center the background */
+    backdrop-filter: blur(10px); /* Default backdrop filter for landing */
+    margin: 0; /* Remove default margin */
+    padding: 0; /* Remove default padding */
+    overflow-x: hidden; /* Prevent horizontal scroll on body if absolutely necessary, better to fix content */
+    font-size: 16px; /* Base font size */
+}
+
+/* Page-specific body classes */
+.landing-body {
+    /* Specific landing body styles if different from base, otherwise base is used */
+}
+.lecturer-body {
+    background-image: url('./image/university-library-scaled.jpg');
+    backdrop-filter: blur(2px);
+}
+.student-body {
+    background-image: url('./image/entrance.jpg');
+    backdrop-filter: blur(5px);
+}
+.dashboard-body {
+    font-family: Arial, sans-serif; /* Override global montserrat for dashboards */
+    background-color: #f4f4f4;
+    background-image: none; /* Dashboards usually don't have a background image */
+    backdrop-filter: none; /* No blur for dashboards */
+    justify-content: flex-start; /* Align dashboard content to the top */
+}
+
+
+/* Base footer style */
+footer{
+    position: absolute; /* Consider changing to 'fixed' or 'relative' based on overall layout needs */
+    bottom: 0;
+    left: 0; /* Corrected left position */
+    background-color: #d81111; /* From main.css */
+    width: 100%; /* Corrected width */
+    font-size: large;
+    font-weight: 500;
+    display: flex;
+    justify-content: center;
+    color: #fefefe;
+    align-items: center;
+    text-align: center;
+    padding: 10px 0; /* Added padding from dashboard footer */
+}
+footer p{
+    text-align: center;
+}
+.back-btn{
+    width: fit-content;
+    background-color: #d81111;
+    border: none;
+    padding: 10px;
+    color: #fefefe;
+    font-weight: 500;
+    position: absolute;
+    left: 0;
+    border-radius: 3px;
+}
+
+/* Specific dashboard footer if different */
+.dashboard-footer {
+    background-color: #333; /* Dashboard specific footer color */
+    /* position: fixed; Ensure this is intended, might conflict with absolute from base footer */
+}
+
+
+/* Base header style */
+header {
+    position: fixed;
+    top: 0; /* Corrected top position */
+    left: 0; /* Ensure header spans full width */
+    width: 100%; /* Corrected width */
+    background-color: #d81111; /* Default background from landing/lecturer/student */
+    display: flex;
+    flex-direction: row; /* Default to row */
+    justify-content: center;
+    padding: 10px 0; /* Simplified padding */
+    color: #fefefe; /* Default text color */
+    align-items: center; /* Vertically align items in header */
+    z-index: 1000; /* Ensure header is on top */
+    min-height: 60px; /* Ensure header has a minimum height */
+}
+
+/* Header image styles */
+header img { /* Applied to all header images */
+    height: 60px; /* Standardized from lecturer/student, landing was 80px */
+}
+
+/* Specific header span for landing page */
+.landing-header span {
+    width: auto; /* Adjust width to content */
+    gap: 1em;
+    display: flex; /* Ensure flex properties apply */
+    align-items: center; /* Align items vertically */
+}
+/* Specific header style for student page */
+.student-header {
+    gap: 10px; /* This was specific to student header */
+}
+
+/* Specific header for dashboards */
+.dashboard-header {
+    background-color: #333;
+    position: static; /* Dashboard header might not need to be fixed */
+    text-align: center; /* From dashboard styles */
+    flex-wrap: wrap; /* Allow items to wrap in dashboard header */
+}
+.dashboard-header h1 {
+    width: 100%; /* Allow h1 to take full width if nav wraps */
+    margin-bottom: 5px;
+}
+
+
+/* Login Div on Landing Page */
+#login-div {
+    border: solid 1px #a09999;
+    box-shadow: #0e0e0e57 0px 1px 20px;
+    background-color: #fefefe;
+    /* height: 25em; Removed fixed height */
+    width: 40em;
+    max-width: 90%; /* Ensure it doesn't overflow on smaller screens */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px; /* Add some padding */
+    margin-top: 80px; /* Adjust if header is fixed */
+    margin-bottom: 20px; /* Space from footer */
+}
+#login-div h1 {
+    text-align: center;
+    color: #0e0e0e;
+    font-size: 1.5em; /* Adjust font size */
+}
+#login-div hr { /* Specific hr for login-div */
+    width: 80%;
+    margin-top: 1em;
+    border: 0;
+    border-top: 1px solid #ccc;
+}
+#login-div p {
+    margin: 1em 2em; /* Adjusted margin */
+    text-align: center;
+    color: #000;
+    font-weight: 560;
+}
+#login-div span {
+    border: solid;
+}
+#login-div div { /* Container for buttons */
+    display: flex;
+    flex-direction: row; /* Default to row */
+    /* height: 10em; Removed fixed height */
+    width: 100%;
+    max-width: 30em;
+    justify-content: center;
+    align-items: center;
+    gap: 2em;
+    margin-top: 1em;
+}
+
+#login-div button {
+    color: #fff;
+    font-size: 1em; /* Adjusted font size */
+    font-weight: 450;
+    border: none;
+    padding: 15px 30px; /* Adjusted padding */
+    border-radius: 5px;
+    background-color: #a09999;
+    cursor: pointer;
+    width: auto; /* Default width */
+}
+#login-div button:hover {
+    transition: 0.5s;
+    box-shadow: 1px 1px 9px #a09999;
+    background-color: #f73030;
+}
+
+
+/* Generic Form Styles (used by lecturer and student forms) */
+form {
+    border: solid 1px #0e0e0e4f;
+    box-shadow: 0px 0px 150px #0e0e0ef6;
+    height: fit-content;
+    width: 40em; /* Max width for forms */
+    max-width: 90%; /* Make forms responsive */
+    background-color: #fefefefe;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: .5em;
+    padding: 2em; /* Adjusted padding */
+    margin-top: 80px;
+    margin-bottom: 80px;
+}
+
+/* Styles for a container div around forms, if used (e.g., in exam.html) */
+.form-container {
+    width: 100%;
+    max-width: 50em;
+    padding: 20px;
+    margin: 20px auto;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    margin-top: 80px; /* Adjust if header is fixed */
+    margin-bottom: 20px; /* Space from footer */
+}
+.form-container form {
+    margin-top: 0;
+    margin-bottom: 0;
+    box-shadow: none;
+    border: none;
+    padding: 1em; /* Reduced padding for form inside container */
+}
+
+form h1 {
+    text-align: center;
+    color: #0e0e0e;
+    font-size: 1.5em; /* Adjust font size */
+}
+label {
+    font-size: 1em; /* Adjust font size */
+    color: #000;
+    font-weight: 600;
+    margin-bottom: 0.25em;
+}
+input[type='text'], input[type='password'] {
+    border: solid #0e0e0e4f 1px;
+    height: 35px;
+    padding-left: 15px;
+    font-size: 1em; /* Adjust font size */
+    background-color: #b3b3b317;
+    width: 100%;
+    margin-bottom: 1em;
+}
+form hr {
+    width: 100%;
+    margin-top: 1em;
+    border: 0;
+    border-top: 1px solid #ccc;
+}
+button[type='submit'], input[type="submit"].submit-btn {
+    height: auto; /* Auto height */
+    min-height: 45px; /* Minimum height for tappability */
+    margin-top: .5em;
+    background-color: #d81111;
+    color: #fefefe;
+    font-size: 1.1em; /* Adjust font size */
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+    padding: 10px;
+}
+button[type='submit']:hover, input[type="submit"].submit-btn:hover {
+    opacity: 0.9;
+}
+
+
+/* Generic Dashboard Styles */
+nav {
+    background-color: #eee;
+    padding: 10px;
+    text-align: center;
+    width: 100%;
+}
+nav ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+nav ul li {
+    display: inline;
+    margin: 0 10px;
+}
+
+nav ul li a {
+    text-decoration: none;
+    color: #333;
+}
+
+main {
+    padding: 20px;
+    width: 100%;
+    flex-grow: 1;
+    margin-top: 60px; /* Default margin for fixed header */
+    margin-bottom: 60px; /* Default margin for fixed footer */
+}
+.dashboard-body main { /* Dashboard specific main content might not need top margin if header is static */
+    margin-top: 0;
+}
+
+
+/* Back button style from main.css */
+.back-btn{
+    width: fit-content;
+    background-color: #d81111;
+    border: none;
+    padding: 10px;
+    color: #fefefe;
+    font-weight: 500;
+    position: absolute;
+    left: 10px;
+    top: 10px;
+    border-radius: 3px;
+    z-index: 1001;
+    text-decoration: none;
+}
+.back-btn:hover {
+    opacity: 0.9;
+}
+
+/* Exam Page Specific Styles (if any more are needed) */
+/* .exam-body {} */
+
+/* Responsive Media Queries */
+
+/* General responsive styles for images */
+img, video {
+    max-width: 100%;
+    height: auto;
+}
+
+/* For tablets */
+@media (max-width: 1023px) {
+    body {
+        font-size: 15px; /* Slightly reduce base font size */
+    }
+
+    #login-div {
+        width: 60em;
+        padding: 25px;
+    }
+    #login-div p {
+        margin: 1em 3em;
+    }
+
+    form {
+        width: 60em; /* Max width for forms */
+        padding: 2.5em;
+    }
+    .form-container {
+        max-width: 40em;
+    }
+
+    header img {
+        height: 50px; /* Slightly smaller logo */
+    }
+    .dashboard-header nav ul li {
+        margin: 0 5px; /* Reduce nav item margin */
+    }
+}
+
+/* For mobile phones */
+@media (max-width: 767px) {
+    body {
+        font-size: 14px; /* Further reduce base font size for mobile */
+    }
+
+    header {
+        padding: 5px 0;
+        flex-direction: column; /* Stack header items */
+        text-align: center;
+    }
+    header img {
+        height: 40px; /* Smaller logo for mobile */
+    }
+    .landing-header span {
+        flex-direction: column; /* Stack logo and title */
+        gap: 0.5em;
+        text-align: center;
+    }
+    .landing-header span h1 {
+        font-size: 1.2em; /* Reduce title size */
+    }
+    .dashboard-header nav ul {
+        display: flex;
+        flex-direction: column; /* Stack nav items */
+        gap: 5px;
+    }
+     .dashboard-header nav ul li a {
+        display: block; /* Make nav links block for easier tapping */
+        padding: 8px;
+        background-color: #ddd;
+        border-radius: 3px;
+    }
+
+
+    #login-div {
+        width: 90%;
+        max-width: none; /* Override previous max-width */
+        padding: 20px;
+        margin-top: 70px; /* Adjust for potentially taller header */
+    }
+    #login-div h1 {
+        font-size: 1.2em;
+    }
+    #login-div p {
+        margin: 1em 1em; /* Reduce horizontal margin */
+    }
+    #login-div div { /* Button container */
+        flex-direction: column; /* Stack buttons */
+        gap: 1em;
+    }
+    #login-div button {
+        width: 100%; /* Make buttons full width */
+        padding: 15px;
+        font-size: 1em;
+    }
+
+    form {
+        width: 90%;
+        max-width: none; /* Override previous max-width */
+        padding: 1.5em; /* Reduce padding */
+        margin-top: 70px; /* Adjust for potentially taller header */
+        margin-bottom: 70px;
+    }
+    .form-container {
+        width: 95%;
+        max-width: none;
+        margin: 70px auto 20px;
+        padding: 15px;
+    }
+     .form-container form {
+        padding: 0.5em;
+    }
+
+    form h1 {
+        font-size: 1.3em;
+    }
+    label {
+        font-size: 0.95em;
+    }
+    input[type='text'], input[type='password'] {
+        font-size: 0.95em;
+        height: 40px; /* Ensure decent tap height */
+    }
+    button[type='submit'], input[type="submit"].submit-btn {
+        font-size: 1em;
+        padding: 12px;
+    }
+
+    main {
+        padding: 10px;
+        margin-top: 120px; /* Adjust if header is taller due to stacking */
+        margin-bottom: 50px; /* Adjust if footer is present */
+    }
+    .dashboard-body main { /* Dashboard specific main content */
+        margin-top: 10px; /* Header is static */
+    }
+
+    .back-btn {
+        padding: 8px;
+        font-size: 0.9em;
+        top: 5px; /* Adjust position relative to stacked header */
+        left: 5px;
+    }
+
+    footer {
+        font-size: medium; /* Adjust footer font size */
+        padding: 8px 0;
+    }
+    footer p {
+        font-size: 0.9em;
+    }
+}
