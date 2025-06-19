@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lecturer Login</title>
+    <link rel="shortcut icon" href="./image/no-bg-white.png" type="image/x-icon">
+    <link rel="stylesheet" href="lecturer.css">
+    <link rel="stylesheet" href="main.css">
+</head>
+<body>
+    <header>
+        <img src="./image/no-bg-white.png" alt="">
+        <h1>Attendance System</h1>
+    </header>
+    
+        <form id="lecturerLoginForm">
+            <h1>
+                <a href="./index.html"><button class="back-btn">Back</button></a>
+            LOGIN AS LECTURER</h1>
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" required>
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+            <hr>
+            <button type="submit">Login</button>
+        </form>
+        <script src="./scripts.js"></script>
+        <script>
+            document.getElementById('lecturerLoginForm').addEventListener('submit', function(event) {
+                event.preventDefault();
+                window.location.href = 'lecturer-dashboard.html';
+            });
+        </script>
+        <footer>
+            <p>&copy; 2025 Attendance System</p>
+        </footer>
+</body>
+</html>

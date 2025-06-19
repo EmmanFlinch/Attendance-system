@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Login</title>
+    <link rel="shortcut icon" href="./image/no-bg-white.png" type="image/x-icon">
+    <link rel="stylesheet" href="student.css">
+    <link rel="stylesheet" href="main.css">
+</head>
+<body>
+    <header>
+        <img src="./image/no-bg-white.png" alt="">
+        <h1>Attendance System | Students</h1>
+    </header>
+    <main>
+        <form id="studentLoginForm">
+            <h1>
+            <button class="back-btn" 
+                    onclick="back()"
+                    >Back</button>
+                Login as a Student</h1>
+            <label for="username">Student ID:</label>
+            <input type="text" id="username" name="username" required>
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+            <hr>
+            <button type="submit">Login</button>
+        </form>
+    </main>
+    <script src="./scripts.js"></script>
+    <footer>
+        <p>&copy; 2025 Attendance System</p>
+    </footer>
+    <script>
+        function back() {
+            window.Location.href = ' index.html';
+        }
+
+        document.getElementById('studentLoginForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            window.location.href = 'student-dashboard.html';
+        });
+    </script>
+    </body>
+</html>

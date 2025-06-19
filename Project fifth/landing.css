@@ -1,0 +1,93 @@
+body{
+    overflow-x: hidden;
+    overflow-y: hidden;
+    display: flex;
+    width: 100vw;
+    height: 100vh;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-image: url('./image/utas-entrance.jpg');
+    background-size: contain;
+    backdrop-filter: blur(10px);
+}
+header{
+    position: fixed;
+    top: -10px;
+    width: 110vw;
+    background-color: #d81111;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    padding: 10px 0 10px 0;
+}
+
+header span{
+    width: 100%;
+    height: fit-content;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 1em;
+    color: #fefefe;
+}
+header span img{
+    height: 80px;
+    
+}
+
+#login-div{
+    border: solid 1px #a09999;
+    box-shadow: #0e0e0e57 0px 1px 20px ;
+    background-color: #fefefe;
+    height: 25em;
+    width: 40em;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+#login-div h1{
+    text-align: center;
+    color: #0e0e0e;
+}
+hr{
+    width: 80%;
+}
+#login-div p{
+    margin: 0 4em;
+    text-align: center;
+    color: #000;
+    font-weight: 560;
+}
+#login-div span{
+    border: solid;
+    
+}
+#login-div div{
+    /* border: solid; */
+    display: flex;
+    height: 10em;
+    width: 30em;
+    justify-content: center;
+    align-items: center;
+    gap: 2em;
+}
+
+#login-div button{
+    color: #fff;
+    font-size: 20px;
+    font-weight: 450;
+    border: none;
+    padding: 20px 70px;
+    border-radius: 5px;
+    background-color: #a09999;
+}
+#login-div button:hover{
+    transition: 0.5s;
+    box-shadow: 1px 1px 9px #a09999;
+    background-color: #f73030;
+}
+
+
+

@@ -1,0 +1,32 @@
+*{
+    font-family: montserrat;
+}
+footer{
+    position: absolute;
+    bottom: 0;
+    left: -10px;
+    background-color: #d81111;
+    width: 100vw;
+    font-size: large;
+    font-weight: 500;
+    display: flex;
+    justify-content: center;
+    color: #fefefe;
+    width: 100%;
+    align-items: center;
+    text-align: center;
+}
+footer p{
+    text-align: center;
+}
+.back-btn{
+    width: fit-content;
+    background-color: #d81111;
+    border: none;
+    padding: 10px;
+    color: #fefefe;
+    font-weight: 500;
+    position: absolute;
+    left: 0;
+    border-radius: 3px;
+}
