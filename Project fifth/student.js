@@ -94,27 +94,27 @@ function setupStudentWaiting() {
             studentIdInput.value = localStorage.getItem('userId');
             studentNameInput.value = localStorage.getItem('username');
             
-            // Check geolocation
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(
-                    (position) => {
-                        // In a real app, you would verify this against the lecturer's location
-                        // For this demo, we'll just assume they're in range
-                        locationStatus.value = 'Within range (verified)';
-                        locationStatus.style.color = 'green';
-                    },
-                    (error) => {
-                        locationStatus.
-
-Emman Flinch, [3/26/2025 4:44 PM]
-value = 'Location access denied';
-                        locationStatus.style.color = 'red';
-                    }
-                );
-            } else {
-                locationStatus.value = 'Geolocation not supported';
-                locationStatus.style.color = 'red';
+            // Store lecturerId and attendanceSessionID in hidden fields
+            if (!document.getElementById('attendanceSessionIdHidden')) { // Changed ID to be more specific
+                const sessionInput = document.createElement('input');
+                sessionInput.type = 'hidden';
+                sessionInput.id = 'attendanceSessionIdHidden';
+                sessionInput.name = 'attendanceSessionID'; // Add name attribute
+                form.appendChild(sessionInput);
             }
+            document.getElementById('attendanceSessionIdHidden').value = data.attendanceSessionID;
+
+            if (!document.getElementById('lecturerIdHidden')) { // Changed ID to be more specific
+                const lecturerIdInput = document.createElement('input');
+                lecturerIdInput.type = 'hidden';
+                lecturerIdInput.id = 'lecturerIdHidden';
+                lecturerIdInput.name = 'lecturerId'; // Add name attribute
+                form.appendChild(lecturerIdInput);
+            }
+            document.getElementById('lecturerIdHidden').value = data.lecturerId;
+
+            locationStatus.textContent = 'Form received. Click "Mark Present" to share location.'; // Update status message
+            locationStatus.style.color = 'blue';
         }
     };
     
@@ -125,32 +125,67 @@ value = 'Location access denied';
     // Form submission
     form.addEventListener('submit', async function(e) {
         e.preventDefault();
-        
-        try {
-            const response = await fetch('/api/attendance/submit', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': Bearer ${localStorage.getItem('token')}
+        locationStatus.textContent = 'Fetching your location...';
+        locationStatus.style.color = 'orange';
+
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                async (studentPosition) => {
+                    locationStatus.textContent = 'Location found. Submitting attendance...';
+                    locationStatus.style.color = 'green';
+
+                    const attendanceSessionID = document.getElementById('attendanceSessionIdHidden').value;
+                    const lecturerId = document.getElementById('lecturerIdHidden').value;
+
+                    try {
+                        const response = await fetch('/api/attendance/submit', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${localStorage.getItem('token')}`
+                            },
+                            body: JSON.stringify({
+                                studentId: studentIdInput.value,
+                                courseCode: attendanceCourse.textContent,
+                                lecturerId: lecturerId,
+                                attendanceSessionID: attendanceSessionID,
+                                latitude: studentPosition.coords.latitude,
+                                longitude: studentPosition.coords.longitude
+                            })
+                        });
+
+                        const data = await response.json();
+
+                        if (response.ok) {
+                            alert(data.message || 'Attendance submitted successfully!');
+                            // Optionally, hide form and show success message or reload
+                            waitingMessage.textContent = data.message || 'Attendance recorded!';
+                            waitingMessage.style.display = 'block';
+                            attendanceForm.style.display = 'none';
+                            // window.location.reload(); // Or update UI without reload
+                        } else {
+                            alert(`Error: ${data.message || 'Failed to submit attendance.'}`);
+                            locationStatus.textContent = `Error: ${data.message || 'Failed to submit.'}`;
+                            locationStatus.style.color = 'red';
+                        }
+                    } catch (error) {
+                        console.error('Error submitting attendance:', error);
+                        alert('An error occurred while submitting. Please try again.');
+                        locationStatus.textContent = 'Submission error. Please try again.';
+                        locationStatus.style.color = 'red';
+                    }
                 },
-                body: JSON.stringify({
-                    studentId: studentIdInput.value,
-                    courseCode: attendanceCourse.textContent,
-                    locationVerified: locationStatus.value.includes('verified')
-                })
-            });
-            
-            const data = await response.json();
-            
-            if (response.ok) {
-                alert('Attendance submitted successfully!');
-                window.location.reload();
-            } else {
-                alert(`Error: ${data.message}`);
-            }
-        } catch (error) {
-            console.error('Error submitting attendance:', error);
-            alert('An error occurred. Please try again.');
+                (error) => {
+                    console.error('Geolocation error:', error);
+                    locationStatus.textContent = `Location error: ${error.message}. Please enable location.`;
+                    locationStatus.style.color = 'red';
+                    alert(`Could not get your location: ${error.message}. Please ensure location services are enabled and try again.`);
+                }
+            );
+        } else {
+            locationStatus.textContent = 'Geolocation not supported by your browser.';
+            locationStatus.style.color = 'red';
+            alert('Geolocation is not supported by your browser.');
         }
     });
 }

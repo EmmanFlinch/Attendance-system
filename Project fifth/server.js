@@ -9,6 +9,9 @@ const bcrypt = require('bcryptjs');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Active attendance sessions
+let activeAttendanceSessions = {};
+
 // Middleware
 app.use(cors());
 app.use(express.json());
@@ -85,6 +88,23 @@ let db = {
 const JWT_SECRET = 'your_jwt_secret_here';
 
 // Helper functions
+
+// Function to calculate distance using the Haversine formula
+function calculateDistance(lat1, lon1, lat2, lon2) {
+    const R = 6371e3; // Radius of the Earth in meters
+    const φ1 = (lat1 * Math.PI) / 180; // Convert latitude to radians
+    const φ2 = (lat2 * Math.PI) / 180;
+    const Δφ = ((lat2 - lat1) * Math.PI) / 180;
+    const Δλ = ((lon2 - lon1) * Math.PI) / 180;
+
+    const a =
+        Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
+        Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+    return R * c; // Distance in meters
+}
+
 function findLecturerByUsername(username) {
     return db.lecturers.find(lecturer => lecturer.username === username);
 }
@@ -253,28 +273,57 @@ app.post('/api/attendance/send-form', (req, res) => {
             return res.status(403).json({ message: 'Forbidden' });
         }
         
-        const { courseCode } = req.body;
+        const { courseCode, latitude, longitude } = req.body; // Added latitude and longitude
+
+        if (!courseCode || latitude === undefined || longitude === undefined) {
+            return res.status(400).json({ message: 'Course code and location are required.' });
+        }
+
+        const lecturerId = decoded.id;
+        const attendanceSessionID = `${courseCode}-${lecturerId}-${Date.now()}`; // Create a unique session ID
+
+        // Store the active session
+        activeAttendanceSessions[attendanceSessionID] = {
+            lecturerId,
+            courseCode,
+            latitude,
+            longitude,
+            timestamp: Date.now(),
+            // Optional: store which students this session is for, if needed later for validation
+            // students: getStudentsInCourse(courseCode).map(s => s.id)
+        };
         
+        console.log('Active session created:', attendanceSessionID, activeAttendanceSessions[attendanceSessionID]);
+
         // Get students in this course
         const students = getStudentsInCourse(courseCode);
         
         // Send form to each student via WebSocket
+        let studentsNotified = 0;
         students.forEach(student => {
             const client = clients.get(student.id);
-            if (client) {
+            if (client && client.readyState === WebSocket.OPEN) { // Check if client is connected
                 client.send(JSON.stringify({
                     type: 'attendance_form',
                     courseCode,
-                    lecturerId: decoded.id
+                    lecturerId: lecturerId,
+                    attendanceSessionID
                 }));
+                studentsNotified++;
             }
         });
         
-        res.json({ message: Attendance form sent to ${students.length} students });
+        res.json({
+            message: `Attendance form sent to ${studentsNotified} of ${students.length} students for session ${attendanceSessionID}.`,
+            attendanceSessionID
+        });
     } catch (error) {
-        res.status(401).json({ message: 'Invalid token' });
+        console.error('Error in /api/attendance/send-form:', error);
+        // Avoid sending JWT_SECRET in error messages to client
+        const errorMessage = (error.name === 'JsonWebTokenError' || error.name === 'TokenExpiredError') ? 'Invalid token' : 'Error sending attendance form';
+        res.status(500).json({ message: errorMessage });
     }
-    });
+});
 
 // Student login
 app.post('/api/student/login', async (req, res) => {
@@ -314,19 +363,74 @@ app.post('/api/attendance/submit', (req, res) => {
             return res.status(403).json({ message: 'Forbidden' });
         }
         
-        const { studentId, courseCode, locationVerified } = req.body;
+        const { studentId, courseCode, lecturerId, attendanceSessionID, latitude, longitude } = req.body;
+
+        // Validate required fields
+        if (!studentId || !courseCode || !lecturerId || !attendanceSessionID || latitude === undefined || longitude === undefined) {
+            return res.status(400).json({ message: 'Missing required attendance data.' });
+        }
+
+        if (decoded.id !== studentId) {
+            return res.status(403).json({ message: 'Forbidden. Token does not match student ID.'})
+        }
+
+        const session = activeAttendanceSessions[attendanceSessionID];
+
+        // Validate session
+        if (!session) {
+            return res.status(400).json({ message: 'Invalid or expired attendance session.' });
+        }
+        if (session.lecturerId !== lecturerId || session.courseCode !== courseCode) {
+            return res.status(400).json({ message: 'Session data mismatch.' });
+        }
+
+        const SESSION_VALIDITY_MS = 10 * 60 * 1000; // 10 minutes
+        if (Date.now() - session.timestamp > SESSION_VALIDITY_MS) {
+            // Optionally, remove expired session: delete activeAttendanceSessions[attendanceSessionID];
+            return res.status(400).json({ message: 'Attendance session has expired.' });
+        }
+
+        // Calculate distance
+        const distance = calculateDistance(session.latitude, session.longitude, latitude, longitude);
+
+        const ATTENDANCE_RADIUS_METERS = 100; // Changed to 100m as per original scripts.js logic
+                                            // This was a mistake in the prompt (10m) will use 100m
+
+        const isPresent = distance <= ATTENDANCE_RADIUS_METERS;
+
+        if (!isPresent) {
+            // Record attendance attempt but mark as absent due to distance
+            db.attendance.push({
+                studentId,
+                courseCode,
+                attendanceSessionID,
+                lecturerId, // Store for audit
+                date: new Date().toISOString(),
+                present: false,
+                serverVerified: true, // Indicates server processed it
+                distance: parseFloat(distance.toFixed(2)), // Store calculated distance
+                reason: 'Outside allowed radius'
+            });
+            return res.status(403).json({ message: `Attendance denied. You are ${distance.toFixed(0)} meters away, which is outside the allowed ${ATTENDANCE_RADIUS_METERS}m radius.` });
+        }
         
-        // Record attendance
+        // Record successful attendance
         db.attendance.push({
             studentId,
             courseCode,
+            attendanceSessionID, // Store session ID with attendance record
+            lecturerId, // Store for audit
             date: new Date().toISOString(),
             present: true,
-            locationVerified
+            serverVerified: true, // Indicates server processed and verified location
+            distance: parseFloat(distance.toFixed(2)) // Store calculated distance
         });
         
-        res.json({ message: 'Attendance recorded successfully' });
+        res.json({ message: 'Attendance recorded successfully.' });
     } catch (error) {
-        res.status(401).json({ message: 'Invalid token' });
+        console.error("Error in /api/attendance/submit:", error);
+        // Avoid sending JWT_SECRET in error messages to client
+        const errorMessage = (error.name === 'JsonWebTokenError' || error.name === 'TokenExpiredError') ? 'Invalid token' : 'Error processing attendance';
+        res.status(500).json({ message: errorMessage });
     }
 });
